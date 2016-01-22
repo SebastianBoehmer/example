@@ -76,7 +76,7 @@ public:
 		not_empty.notify_one();
 	}
 
-    value_type && fetch()
+    value_type & fetch()
     {
 		std::unique_lock<std::mutex> l(lock);
 
@@ -94,7 +94,7 @@ public:
             result = buffer[i];
         }
 
-        return std::move(result);
+        return result;
 	}
 
     BoundedBuffer<T> & operator<<(typename BoundedBuffer<T>::value_type &&rhs)
