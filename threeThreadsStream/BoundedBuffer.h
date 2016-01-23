@@ -19,6 +19,8 @@
  * @brief The BoundedBuffer class
  * A cyclic buffer, which has the read index everytime behind the write index.
  * The buffer size is given in the constructor.
+ * It has to be guarantied, that there is only one thread which reads or writes from one buffer!
+ *
  * @see http://baptiste-wicht.com/posts/2012/04/c11-concurrency-tutorial-advanced-locking-and-condition-variables.html
  */
 template<typename T>
@@ -60,7 +62,14 @@ public:
     {
 		std::unique_lock<std::mutex> l(lock);
 
+        // with this if, it would be correct, because deposite could be called from two threads.
+        // And the second thread would not get any notify() again.
+        // Because we have only one thread guarantied to call deposite on this buffer,
+        // we omit this if for performance reasons.
+        //if (count.load() != capacity) {
         not_full.wait_for(l, delayCheck, [this](){return count.load() != capacity; });
+        //}
+
         if (count.load() == capacity)
         {
             // TODO: check, if front.store(front.load()+1) is possible.

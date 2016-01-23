@@ -88,6 +88,7 @@ int main()
     BoundedBuffer<ttt::dataType> inputToWrokingBuffer(ttt::capacity);
     BoundedBuffer<ttt::dataType> workingToOutputBuffer(ttt::capacity);
 
+    // It has to be guarantied, that there is only one thread which reads or writes from one buffer.
     auto inputThread = std::async(std::launch::async, threadInputFnc<ttt::dataType>
                                   , std::ref(inputToWrokingBuffer)      // ref, because & ref in thread fnc.
                                   , ttt::delay);        // delay can be different values
